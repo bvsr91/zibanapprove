@@ -1,0 +1,19 @@
+<core:FragmentDefinition xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m" height="100%"
+    xmlns:core="sap.ui.core">
+    <Dialog>
+        <ScrollContainer height="100%" width="100%" horizontal="true" vertical="true">
+            <FlexBox direction="Column" renderType="Div" class="sapUiSmallMargin">
+                <FlexBox>
+                    <Button text="Correctly Displayed" press="onCorrectPathClick"/>
+                    <Button text="Loading Error" press="onIncorrectPathClick"/>
+                </FlexBox>
+                <PDFViewer source="{userModel>/Source}" title="{/Title}" height="{/Height}">
+                    <layoutData>
+                        <FlexItemData growFactor="1" />
+                    </layoutData>
+                </PDFViewer>
+            </FlexBox>
+        </ScrollContainer>
+    </Dialog>
+</core:FragmentDefinition>

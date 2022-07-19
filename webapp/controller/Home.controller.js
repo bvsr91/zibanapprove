@@ -6,11 +6,12 @@ sap.ui.define([
     "sap/ui/table/RowAction",
     "sap/ui/table/RowActionItem",
     "sap/ui/table/RowSettings",
+    "sap/m/MessageBox"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, Filter, Sorter, FilterOperator, RowAction, RowActionItem, RowSettings) {
+    function (Controller, Filter, Sorter, FilterOperator, RowAction, RowActionItem, RowSettings, MessageBox) {
         "use strict";
 
         return Controller.extend("com.ferrero.zibanreq.controller.Home", {
@@ -55,41 +56,43 @@ sap.ui.define([
             },
             handleActionPress: function (oEvent) {
                 var oInput = oEvent.getSource().getParent();
-                var bEdit;
+                var bApprove, bReject;
                 var bDelete;
                 var oRecordCreator = oInput.getBindingContext().getObject().createdBy;
                 // var oRecordApprover = oInput.getBindingContext().getObject().approver;
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/userid");
-                if (logOnUserObj.userid && oRecordApprover.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
-                    if (oInput.getBindingContext().getObject().status_code === "Approved") {
-                        bEdit = false;
-                    } else {
-                        bEdit = true;
-                    }
-
+                // if (logOnUserObj.userid && oRecordApprover.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
+                if (oInput.getBindingContext().getObject().status_code === "Approved" ||
+                    oInput.getBindingContext().getObject().status_code === "Rejected") {
+                    bApprove = false;
                 } else {
-                    bEdit = false;
+                    bApprove = true;
                 }
-                var oPopover = new sap.m.Popover({
-                    placement: "Auto",
-                    showHeader: false,
-                    content: [
-                        new sap.m.VBox({
-                            items: [
-                                new sap.m.Button({
-                                    text: 'Approve', icon: 'sap-icon://accept', type: 'Transparent', width: '6rem', enabled: !bEdit,
-                                    // press: this.onPressApprove.bind(this, oInput)
-                                }),
-                                new sap.m.Button({
-                                    text: 'Reject', icon: 'sap-icon://decline', type: 'Transparent', width: '6rem', enabled: !bEdit,
-                                    // press: this.onPressReject.bind(this, oInput)
-                                })
-                            ]
-                        }).addStyleClass("sapUiTinyMargin"),
-                    ],
-                }).addStyleClass("sapUiResponsivePadding");
-                this._oPopover = oPopover;
-                oPopover.openBy(oInput);
+                // if (oInput.getBindingContext().getObject().status_code === "Rejected") {
+                //     bEdit = false;
+                // } else {
+                //     bEdit = true;
+                // }
+
+                // } else {
+                //     bEdit = false;
+                // }
+                var oActionSheet = new sap.m.ActionSheet({
+                    placement: "Bottom",
+                    buttons: [
+                        new sap.m.Button({
+                            text: 'Approve', type: 'Transparent', width: '6rem', enabled: bApprove,
+                            type: "Accept",
+                            press: this.onPressApprove.bind(this, oInput)
+                        }),
+                        new sap.m.Button({
+                            text: 'Reject', type: 'Transparent', width: '6rem', enabled: bApprove,
+                            type: "Reject",
+                            press: this.onPressReject.bind(this, oInput)
+                        })
+                    ]
+                });
+                oActionSheet.openBy(oInput);
             },
             _onRouteMatched: function () {
                 // this.getView().byId("idSTMyRequests").rebindTable(true);
@@ -105,21 +108,26 @@ sap.ui.define([
                 var oBinding = oList.getBinding("items");
                 oBinding.filter(aFilters, "Application");
             },
-            onPressDownloadLink: function (oEvent) {
+            onPressDownloadLink: async function (oEvent) {
                 var refId = oEvent.getSource().getBindingContext().getObject().linkToAttach_uuid;
                 var oModel = this.getOwnerComponent().getModel();
-                var sServiceUrl = oModel.sServiceUrl + "/RequestAttachments(guid'" + refId + "')/$value";
+                var sServiceUrl = oModel.sServiceUrl + "/RequestAttachments(guid'" + refId + "')/content";
+                sap.ui.core.BusyIndicator.show();
+                const oAttach = await $.get(oModel.sServiceUrl + "/RequestAttachments(guid'" + refId + "')");
+                var sTitle;
+                if (oAttach.d) {
+                    sTitle = oAttach.d.fileName;
+                }
                 // sap.m.URLHelper.redirect(sServiceUrl);
-                var opdfViewer = new sap.m.PDFViewer();
-                this.getView().addDependent(opdfViewer);
+                var oPdfViewer = new sap.m.PDFViewer();
+                oPdfViewer.setShowDownloadButton(false);
+                this.getView().addDependent(oPdfViewer);
 
 
-                opdfViewer.setSource(sServiceUrl);
-                // opdfViewer.setTitle("My PDF");
-                opdfViewer.open();
-
-                // var oHtml = new sap.ui.core.HTML();
-                // oHtml.setContent("<iframe src='" + sServiceUrl + "' height='700' width='1300'></iframe>");
+                oPdfViewer.setSource(sServiceUrl);
+                oPdfViewer.setTitle(sTitle);
+                sap.ui.core.BusyIndicator.hide();
+                oPdfViewer.open();
             },
             onBeforeRebindTable: async function (oEvent) {
                 var mBindingParams = oEvent.getParameter("bindingParams"),
@@ -158,6 +166,48 @@ sap.ui.define([
                 if (info.d) {
                     this.getOwnerComponent().getModel("userModel").setProperty("/userid", info.d.getUserDetails);
                 }
+            },
+            onPressApprove: function (oEvent) {
+                var oObj = oEvent.getParent().getBindingContext().getObject();
+                var oModel = this.getOwnerComponent().getModel();
+                var oPayLoad = {
+                    "status_code": "Approved",
+                    "approvedDate": new Date().toISOString()
+                }
+                sap.ui.core.BusyIndicator.show();
+                var sPath = "/Request(" + oObj.RequestID + ")";
+                oModel.update(sPath, oPayLoad, {
+                    success: function (oData) {
+                        this.getOwnerComponent().getModel().refresh();
+                        MessageBox.success("Record Approved successfully");
+                        sap.ui.core.BusyIndicator.hide();
+                    }.bind(this),
+                    error: function (error) {
+                        sap.ui.core.BusyIndicator.hide();
+                        MessageBox.error(error);
+                    }.bind(this)
+                })
+            },
+            onPressReject: function (oEvent) {
+                var oObj = oEvent.getParent().getBindingContext().getObject();
+                var oModel = this.getOwnerComponent().getModel();
+                var oPayLoad = {
+                    "status_code": "Rejected",
+                    "approvedDate": new Date().toISOString()
+                }
+                sap.ui.core.BusyIndicator.show();
+                var sPath = "/Request(" + oObj.RequestID + ")";
+                oModel.update(sPath, oPayLoad, {
+                    success: function (oData) {
+                        this.getOwnerComponent().getModel().refresh();
+                        MessageBox.success("Record Rejected successfully");
+                        sap.ui.core.BusyIndicator.hide();
+                    }.bind(this),
+                    error: function (error) {
+                        sap.ui.core.BusyIndicator.hide();
+                        MessageBox.error(error);
+                    }.bind(this)
+                })
             }
         });
     });
