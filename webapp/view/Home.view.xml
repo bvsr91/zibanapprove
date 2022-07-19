@@ -26,7 +26,7 @@
                         </t:customData>
                         <Label text="Attachment" />
                         <t:template>
-                            <core:Icon src="sap-icon://pdf-attachment" press="onPressDownloadLink" size="1.0rem" tooltip="Preview" color="Default" />
+                            <core:Icon src="sap-icon://pdf-attachment" visible="{= ${linkToAttach_uuid} !== null ? true : false}" press="onPressDownloadLink" size="1.2rem" tooltip="Preview" color="Default" />
                         </t:template>
                     </t:Column>
                 </t:columns>
