@@ -1,0 +1,62 @@
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+        <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />
+    </edmx:Reference>
+    <edmx:Reference Uri="/v2/IbanSrv/$metadata">
+        <edmx:Include Alias="Metadata" Namespace="CatalogService" />
+    </edmx:Reference>
+    <edmx:Reference Uri="https://wiki.scn.sap.com/wiki/download/attachments/448470974/Common.xml?api=v2">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1" />
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="zibanapprove.localService.annotation0.IbanSrv">
+            <Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="Metadata.Request_A/status_code">
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="CollectionPath" String="StatusCodeList" />
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="status_code" />
+                                    <PropertyValue Property="ValueListProperty" String="code" />
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.ValueListWithFixedValues" Bool="true" />
+            </Annotations>
+            <Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="Metadata.Request_A/status_code">
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="CollectionPath" String="StatusCodeList" />
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="status_code" />
+                                    <PropertyValue Property="ValueListProperty" String="code" />
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.ValueListWithFixedValues" Bool="true" />
+            </Annotations>
+            <Annotations Target="Metadata.StatusCodeList/createDeleteHidden">
+                <Annotation Term="com.sap.vocabularies.UI.v1.Hidden" />
+            </Annotations>
+            <Annotations Target="Metadata.StatusCodeList/insertDeleteRestriction">
+                <Annotation Term="com.sap.vocabularies.UI.v1.Hidden" />
+            </Annotations>
+            <Annotations Target="Metadata.StatusCodeList/criticality">
+                <Annotation Term="com.sap.vocabularies.UI.v1.Hidden" />
+            </Annotations>
+            <Annotations Target="Metadata.StatusCodeList/name">
+                <Annotation Term="com.sap.vocabularies.UI.v1.Hidden" />
+            </Annotations>
+            <Annotations Target="Metadata.StatusCodeList/descr">
+                <Annotation Term="com.sap.vocabularies.UI.v1.Hidden" />
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

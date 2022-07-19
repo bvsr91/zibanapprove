@@ -1,0 +1,47 @@
+<mvc:View controllerName="com.ferrero.zibanapprove.controller.Home"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:l="sap.ui.layout"
+    xmlns:u="sap.ui.unified"
+    xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+    xmlns:smartTable="sap.ui.comp.smarttable"
+    xmlns:t="sap.ui.table"
+    xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1" height="100%">
+    <!-- <Page showHeader="false" enableScrolling="false" class="sapUiContentPadding" showNavButton="false">
+        <content> -->
+    <!-- <Panel expandable="true" headerText="Filter Bar" class="sapUiNoContentPadding">
+                <content> -->
+    <VBox fitContainer="true">
+        <smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="Request_A" class="sapUiContentPadding" />
+        <!-- </content>
+            </Panel> -->
+        <smartTable:SmartTable id="idSTMyRequests" entitySet="Request_A" smartFilterId="smartFilterBar" beforeExport="onBeforeExport" showRowCount="true" tableType="ResponsiveTable" placeToolbarInTable="true" header="Requests" persistencyKey="SmartTableDataState" enableAutoColumnWidth="true" enableAutoBinding="true" useVariantManagement="false" demandPopin="true" class="sapUiResponsiveContentPadding" ignoredFields="RequestUUID,linkToAttach_uuid" requestAtLeastFields="RequestUUID,linkToAttach_uuid" beforeRebindTable="onBeforeRebindTable">
+            <t:Table id="idUiTabMyRequest" visibleRowCount="9" selectionMode="None">
+                <t:columns>
+                    <t:Column width="6rem" hAlign="Center">
+                        <t:customData>
+                            <core:CustomData key="p13nData" value='\{"columnKey": "linkToAttach_uuid", "columnIndex": 5, "leadingProperty": "linkToAttach_uuid"}'/>
+                        </t:customData>
+                        <Label text="Attachment" />
+                        <t:template>
+                            <core:Icon src="sap-icon://pdf-attachment" press="onPressDownloadLink" size="1.3rem" tooltip="Preview" color="Default" />
+                        </t:template>
+                    </t:Column>
+                </t:columns>
+            </t:Table>
+            <smartTable:customToolbar>
+                <OverflowToolbar>
+                    <content>
+                        <ToolbarSpacer />
+                        <!-- <Button icon="sap-icon://add" tooltip="Add new record" press=".handleAddVendor" /> -->
+                        <!-- <Button id="createButton" icon="sap-icon://add-document" tooltip="Create" visible="{userModel>/bPricingVendorAddBtn}" press="onOpenAddDialog"/> -->
+                    </content>
+                </OverflowToolbar>
+            </smartTable:customToolbar>
+        </smartTable:SmartTable>
+    </VBox>
+    <!-- </content>
+</Page> -->
+</mvc:View>

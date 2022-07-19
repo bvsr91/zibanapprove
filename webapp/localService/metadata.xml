@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/HTML5.xml" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Alias="HTML5" Namespace="com.sap.vocabularies.HTML5.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+    </edmx:Reference>
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="CatalogService" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityContainer Name="EntityContainer" m:IsDefaultEntityContainer="true">
+                <EntitySet Name="Request" EntityType="CatalogService.Request"/>
+                <EntitySet Name="RequestAttachments" EntityType="CatalogService.RequestAttachments"/>
+                <EntitySet Name="StatusCodeList" EntityType="CatalogService.StatusCodeList"/>
+                <EntitySet Name="StatusCodeList_texts" EntityType="CatalogService.StatusCodeList_texts"/>
+                <AssociationSet Name="Request_status" Association="CatalogService.Request_status">
+                    <End Role="Request" EntitySet="Request"/>
+                    <End Role="StatusCodeList" EntitySet="StatusCodeList"/>
+                </AssociationSet>
+                <AssociationSet Name="Request_linkToAttach" Association="CatalogService.Request_linkToAttach">
+                    <End Role="Request" EntitySet="Request"/>
+                    <End Role="RequestAttachments" EntitySet="RequestAttachments"/>
+                </AssociationSet>
+                <AssociationSet Name="StatusCodeList_texts_1" Association="CatalogService.StatusCodeList_texts_1">
+                    <End Role="StatusCodeList" EntitySet="StatusCodeList"/>
+                    <End Role="StatusCodeList_texts" EntitySet="StatusCodeList_texts"/>
+                </AssociationSet>
+                <AssociationSet Name="StatusCodeList_localized" Association="CatalogService.StatusCodeList_localized">
+                    <End Role="StatusCodeList" EntitySet="StatusCodeList"/>
+                    <End Role="StatusCodeList_texts" EntitySet="StatusCodeList_texts"/>
+                </AssociationSet>
+            </EntityContainer>
+            <EntityType Name="Request">
+                <Key>
+                    <PropertyRef Name="RequestID"/>
+                </Key>
+                <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="RequestID" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="VendorUser" Type="Edm.String"/>
+                <Property Name="VendorCode" Type="Edm.String"/>
+                <Property Name="VendorName" Type="Edm.String"/>
+                <Property Name="AccountHolder" Type="Edm.String"/>
+                <Property Name="IBAN" Type="Edm.String"/>
+                <Property Name="BIC_SWIFT_Code" Type="Edm.String"/>
+                <Property Name="RequestType" Type="Edm.String"/>
+                <Property Name="RiskScore" Type="Edm.String"/>
+                <Property Name="SubmissionDate" Type="Edm.DateTime" sap:display-format="Date"/>
+                <NavigationProperty Name="status" Relationship="CatalogService.Request_status" FromRole="Request" ToRole="StatusCodeList"/>
+                <Property Name="status_code" Type="Edm.String"/>
+                <NavigationProperty Name="linkToAttach" Relationship="CatalogService.Request_linkToAttach" FromRole="Request" ToRole="RequestAttachments"/>
+                <Property Name="linkToAttach_uuid" Type="Edm.Guid"/>
+            </EntityType>
+            <EntityType Name="RequestAttachments" m:HasStream="true">
+                <Key>
+                    <PropertyRef Name="uuid"/>
+                </Key>
+                <Property Name="uuid" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="fileType" Type="Edm.String"/>
+                <Property Name="fileName" Type="Edm.String"/>
+            </EntityType>
+            <EntityType Name="StatusCodeList">
+                <Key>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.String" Nullable="false"/>
+                <Property Name="criticality" Type="Edm.Int32"/>
+                <Property Name="createDeleteHidden" Type="Edm.Boolean"/>
+                <Property Name="insertDeleteRestriction" Type="Edm.Boolean"/>
+                <NavigationProperty Name="texts" Relationship="CatalogService.StatusCodeList_texts_1" FromRole="StatusCodeList" ToRole="StatusCodeList_texts"/>
+                <NavigationProperty Name="localized" Relationship="CatalogService.StatusCodeList_localized" FromRole="StatusCodeList" ToRole="StatusCodeList_texts"/>
+            </EntityType>
+            <EntityType Name="StatusCodeList_texts">
+                <Key>
+                    <PropertyRef Name="locale"/>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.String" Nullable="false"/>
+            </EntityType>
+            <Association Name="Request_status">
+                <End Role="Request" Type="CatalogService.Request" Multiplicity="*"/>
+                <End Role="StatusCodeList" Type="CatalogService.StatusCodeList" Multiplicity="0..1"/>
+                <ReferentialConstraint>
+                    <Principal Role="StatusCodeList">
+                        <PropertyRef Name="code"/>
+                    </Principal>
+                    <Dependent Role="Request">
+                        <PropertyRef Name="status_code"/>
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <Association Name="Request_linkToAttach">
+                <End Role="Request" Type="CatalogService.Request" Multiplicity="1">
+                    <OnDelete Action="Cascade"/>
+                </End>
+                <End Role="RequestAttachments" Type="CatalogService.RequestAttachments" Multiplicity="0..1"/>
+                <ReferentialConstraint>
+                    <Principal Role="RequestAttachments">
+                        <PropertyRef Name="uuid"/>
+                    </Principal>
+                    <Dependent Role="Request">
+                        <PropertyRef Name="linkToAttach_uuid"/>
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <Association Name="StatusCodeList_texts_1">
+                <End Role="StatusCodeList" Type="CatalogService.StatusCodeList" Multiplicity="1">
+                    <OnDelete Action="Cascade"/>
+                </End>
+                <End Role="StatusCodeList_texts" Type="CatalogService.StatusCodeList_texts" Multiplicity="*"/>
+            </Association>
+            <Association Name="StatusCodeList_localized">
+                <End Role="StatusCodeList" Type="CatalogService.StatusCodeList" Multiplicity="*"/>
+                <End Role="StatusCodeList_texts" Type="CatalogService.StatusCodeList_texts" Multiplicity="0..1"/>
+            </Association>
+            <Annotations Target="CatalogService.Request" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="RequestID"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                            <Annotation Term="HTML5.CssDefaults">
+                                <Record Type="HTML5.CssDefaultsType">
+                                    <PropertyValue Property="width" String="9rem"/>
+                                </Record>
+                            </Annotation>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="RequestType"/>
+                            <Annotation Term="HTML5.CssDefaults">
+                                <Record Type="HTML5.CssDefaultsType">
+                                    <PropertyValue Property="width" String="8rem"/>
+                                </Record>
+                            </Annotation>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="VendorUser"/>
+                            <Annotation Term="HTML5.CssDefaults">
+                                <Record Type="HTML5.CssDefaultsType">
+                                    <PropertyValue Property="width" String="10rem"/>
+                                </Record>
+                            </Annotation>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="VendorCode"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="VendorName"/>
+                            <Annotation Term="HTML5.CssDefaults">
+                                <Record Type="HTML5.CssDefaultsType">
+                                    <PropertyValue Property="width" String="7rem"/>
+                                </Record>
+                            </Annotation>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="SubmissionDate"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="status_code"/>
+                            <PropertyValue Property="Criticality" Path="status/criticality"/>
+                            <Annotation Term="HTML5.CssDefaults">
+                                <Record Type="HTML5.CssDefaultsType">
+                                    <PropertyValue Property="width" String="7rem"/>
+                                </Record>
+                            </Annotation>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="IBAN"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="BIC_SWIFT_Code"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="AccountHolder"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="createdBy"/>
+                            <Annotation Term="HTML5.CssDefaults">
+                                <Record Type="HTML5.CssDefaultsType">
+                                    <PropertyValue Property="width" String="7rem"/>
+                                </Record>
+                            </Annotation>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="modifiedAt"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="modifiedBy"/>
+                            <Annotation Term="HTML5.CssDefaults">
+                                <Record Type="HTML5.CssDefaultsType">
+                                    <PropertyValue Property="width" String="7rem"/>
+                                </Record>
+                            </Annotation>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>RequestID</PropertyPath>
+                        <PropertyPath>RequestType</PropertyPath>
+                        <PropertyPath>VendorCode</PropertyPath>
+                        <PropertyPath>status_code</PropertyPath>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CatalogService.Request/createdAt" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="Created On"/>
+            </Annotations>
+            <Annotations Target="CatalogService.Request/createdBy" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.Description" String="User's unique ID"/>
+                <Annotation Term="Common.Label" String="Created By"/>
+            </Annotations>
+            <Annotations Target="CatalogService.Request/modifiedAt" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="Changed On"/>
+            </Annotations>
+            <Annotations Target="CatalogService.Request/modifiedBy" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.Description" String="User's unique ID"/>
+                <Annotation Term="Common.Label" String="Changed By"/>
+            </Annotations>
+            <Annotations Target="CatalogService.Request/RequestID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Request ID"/>
+            </Annotations>
+            <Annotations Target="CatalogService.Request/VendorUser" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Vendor User"/>
+            </Annotations>
+            <Annotations Target="CatalogService.Request/VendorCode" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Vendor Code"/>
+            </Annotations>
+            <Annotations Target="CatalogService.Request/VendorName" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Vendor Name"/>
+            </Annotations>
+            <Annotations Target="CatalogService.Request/AccountHolder" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Account Holder"/>
+            </Annotations>
+            <Annotations Target="CatalogService.Request/IBAN" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="IBAN"/>
+            </Annotations>
+            <Annotations Target="CatalogService.Request/BIC_SWIFT_Code" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="BIC/SWIFT Code"/>
+            </Annotations>
+            <Annotations Target="CatalogService.Request/RequestType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Request Type"/>
+            </Annotations>
+            <Annotations Target="CatalogService.Request/RiskScore" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Risk Score"/>
+            </Annotations>
+            <Annotations Target="CatalogService.Request/SubmissionDate" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Submission Date"/>
+            </Annotations>
+            <Annotations Target="CatalogService.Request/status" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Status"/>
+            </Annotations>
+            <Annotations Target="CatalogService.Request/status_code" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Status"/>
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="Label" String="Status"/>
+                        <PropertyValue Property="CollectionPath" String="StatusCodeList"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="status_code"/>
+                                    <PropertyValue Property="ValueListProperty" String="code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="name"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CatalogService.RequestAttachments" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Core.MediaType" Path="fileType"/>
+            </Annotations>
+            <Annotations Target="CatalogService.RequestAttachments/content" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Core.ContentDisposition">
+                    <Record Type="Core.ContentDispositionType">
+                        <PropertyValue Property="Filename" Path="fileName"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.Label" String="cotent"/>
+            </Annotations>
+            <Annotations Target="CatalogService.RequestAttachments/fileType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Core.IsMediaType" Bool="true"/>
+                <Annotation Term="Common.Label" String="File Type"/>
+            </Annotations>
+            <Annotations Target="CatalogService.RequestAttachments/fileName" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="File Name"/>
+            </Annotations>
+            <Annotations Target="CatalogService.StatusCodeList" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.Identification">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="name"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CatalogService.StatusCodeList/name" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Name"/>
+            </Annotations>
+            <Annotations Target="CatalogService.StatusCodeList/descr" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Description"/>
+            </Annotations>
+            <Annotations Target="CatalogService.StatusCodeList/code" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+            </Annotations>
+            <Annotations Target="CatalogService.StatusCodeList_texts/name" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Name"/>
+            </Annotations>
+            <Annotations Target="CatalogService.StatusCodeList_texts/descr" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Description"/>
+            </Annotations>
+            <Annotations Target="CatalogService.StatusCodeList_texts/code" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>
