@@ -57,6 +57,21 @@
             <Annotations Target="Metadata.StatusCodeList/descr">
                 <Annotation Term="com.sap.vocabularies.UI.v1.Hidden" />
             </Annotations>
+            <Annotations Target="Metadata.RequestAttachments/uuid">
+                <Annotation Term="com.sap.vocabularies.UI.v1.HiddenFilter" />
+            </Annotations>
+            <Annotations Target="Metadata.Request_A/linkToAttach_uuid">
+                <Annotation Term="com.sap.vocabularies.UI.v1.HiddenFilter" />
+            </Annotations>
+            <Annotations Target="Metadata.RequestAttachments/fileType">
+                <Annotation Term="com.sap.vocabularies.UI.v1.HiddenFilter" />
+            </Annotations>
+            <Annotations Target="Metadata.RequestAttachments/fileName">
+                <Annotation Term="com.sap.vocabularies.UI.v1.HiddenFilter" />
+            </Annotations>
+            <Annotations Target="Metadata.RequestAttachments/uuid">
+                <Annotation Term="com.sap.vocabularies.UI.v1.HiddenFilter" />
+            </Annotations>
         </Schema>
     </edmx:DataServices>
 </edmx:Edmx>
